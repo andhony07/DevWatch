@@ -1,0 +1,91 @@
+/**
+ * @fileoverview Application-wide response message constants.
+ * No inline strings or magic text anywhere in the codebase.
+ * All user-facing messages are defined here.
+ */
+
+export const MESSAGES = Object.freeze({
+  // ── Generic ────────────────────────────────────────────────
+  SUCCESS: 'Request completed successfully.',
+  CREATED: 'Resource created successfully.',
+  UPDATED: 'Resource updated successfully.',
+  DELETED: 'Resource deleted successfully.',
+  NOT_FOUND: 'The requested resource was not found.',
+  BAD_REQUEST: 'The request contains invalid or missing parameters.',
+  INTERNAL_ERROR: 'An unexpected error occurred. Please try again later.',
+  UNAUTHORIZED: 'Authentication is required to access this resource.',
+  FORBIDDEN: 'You do not have permission to perform this action.',
+  CONFLICT: 'A resource with this identifier already exists.',
+  VALIDATION_ERROR: 'One or more fields failed validation.',
+  TOO_MANY_REQUESTS: 'Too many requests. Please slow down and try again.',
+  NOT_IMPLEMENTED: 'This feature is not yet implemented.',
+
+  // ── Authentication ─────────────────────────────────────────
+  AUTH: Object.freeze({
+    LOGIN_SUCCESS: 'Login successful.',
+    LOGOUT_SUCCESS: 'Logout successful.',
+    REGISTER_SUCCESS: 'Registration successful. Welcome aboard.',
+    INVALID_CREDENTIALS: 'Invalid email or password.',
+    TOKEN_MISSING: 'Authentication token is missing.',
+    TOKEN_INVALID: 'Authentication token is invalid or malformed.',
+    TOKEN_EXPIRED: 'Authentication token has expired. Please log in again.',
+    REFRESH_SUCCESS: 'Access token refreshed successfully.',
+    EMAIL_IN_USE: 'An account with this email address already exists.',
+    ACCOUNT_INACTIVE: 'This account has been deactivated. Please contact support.',
+    PASSWORD_RESET_SENT: 'Password reset instructions have been sent to your email.',
+    PASSWORD_RESET_SUCCESS: 'Password has been reset successfully.',
+    PROFILE_FETCHED: 'User profile retrieved successfully.',
+  }),
+
+  // ── Health Check ───────────────────────────────────────────
+  HEALTH: Object.freeze({
+    OK: 'Service is healthy and fully operational.',
+    DEGRADED: 'Service is degraded. Some features may be unavailable.',
+    PING: 'Pong.',
+  }),
+
+  // ── Database ───────────────────────────────────────────────
+  DATABASE: Object.freeze({
+    CONNECTED: 'MongoDB connected successfully.',
+    DISCONNECTED: 'MongoDB connection closed.',
+    CONNECTION_ERROR: 'Failed to connect to MongoDB.',
+    RECONNECTING: 'Attempting to reconnect to MongoDB...',
+    RECONNECTED: 'MongoDB reconnected successfully.',
+  }),
+
+  // ── Server ────────────────────────────────────────────────
+  SERVER: Object.freeze({
+    STARTED: 'Server is running.',
+    SHUTDOWN: 'Shutdown initiated. Closing connections gracefully...',
+    GRACEFUL_SHUTDOWN: 'Server shut down gracefully. Goodbye.',
+  }),
+
+  // ── Monitoring ────────────────────────────────────────────
+  MONITORING: Object.freeze({
+    METRIC_RECORDED: 'Metric recorded successfully.',
+    ALERT_TRIGGERED: 'Alert condition has been triggered.',
+    ALERT_RESOLVED: 'Alert has been resolved.',
+    NO_DATA: 'No monitoring data available for the specified time range.',
+    SERVICE_HEALTHY: 'Service is responding normally.',
+    SERVICE_DEGRADED: 'Service is experiencing elevated response times.',
+    SERVICE_DOWN: 'Service is not responding.',
+  }),
+
+  // ── Analytics ────────────────────────────────────────────
+  ANALYTICS: Object.freeze({
+    REPORT_GENERATED: 'Report generated successfully.',
+    NO_DATA: 'Insufficient data to generate this report.',
+  }),
+
+  // ── Notifications ─────────────────────────────────────────
+  NOTIFICATIONS: Object.freeze({
+    SENT: 'Notification sent successfully.',
+    PREFERENCES_UPDATED: 'Notification preferences updated.',
+  }),
+
+  // ── Audit ─────────────────────────────────────────────────
+  AUDIT: Object.freeze({
+    LOG_CREATED: 'Audit event logged.',
+    LOGS_FETCHED: 'Audit logs retrieved successfully.',
+  }),
+});
