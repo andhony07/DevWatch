@@ -45,7 +45,19 @@ const ENV_SCHEMA = [
     name: 'JWT_EXPIRE',
     required: false,
     type: 'string',
-    default: '7d',
+    default: '15m',
+  },
+  {
+    name: 'JWT_REFRESH_SECRET',
+    required: false,
+    type: 'string',
+    default: 'devwatch_refresh_secret_key_minimum_32_chars_long',
+  },
+  {
+    name: 'JWT_REFRESH_EXPIRE',
+    required: false,
+    type: 'string',
+    default: '30d',
   },
   {
     name: 'CLIENT_URL',

@@ -32,8 +32,10 @@ validateEnv();
 
 /**
  * @typedef {Object} JwtConfig
- * @property {string} secret - JWT signing secret
- * @property {string} expire - Token expiry duration (e.g. '7d')
+ * @property {string} secret        - JWT access token signing secret
+ * @property {string} expire        - Access token expiry duration (e.g. '15m')
+ * @property {string} refreshSecret - JWT refresh token signing secret
+ * @property {string} refreshExpire - Refresh token expiry duration (e.g. '30d')
  */
 
 /**
@@ -60,6 +62,8 @@ export const config = Object.freeze({
   jwt: Object.freeze({
     secret: process.env.JWT_SECRET,
     expire: process.env.JWT_EXPIRE,
+    refreshSecret: process.env.JWT_REFRESH_SECRET,
+    refreshExpire: process.env.JWT_REFRESH_EXPIRE,
   }),
 
   openAiApiKey: process.env.OPENAI_API_KEY || undefined,

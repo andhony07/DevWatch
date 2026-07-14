@@ -94,6 +94,34 @@ const userSchema = new mongoose.Schema(
       default: null,
     },
 
+    refreshToken: {
+      type: String,
+      default: null,
+      select: false, // Never expose token hash in queries
+    },
+
+    passwordResetToken: {
+      type: String,
+      default: null,
+      select: false,
+    },
+
+    passwordResetExpires: {
+      type: Date,
+      default: null,
+    },
+
+    emailVerificationToken: {
+      type: String,
+      default: null,
+      select: false,
+    },
+
+    emailVerificationExpires: {
+      type: Date,
+      default: null,
+    },
+
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
@@ -136,7 +164,7 @@ const userSchema = new mongoose.Schema(
 userSchema.plugin(softDeletePlugin);
 
 // ── Indexes ───────────────────────────────────────────────────────────────────
-userSchema.index({ email: 1 }, { unique: true });
+// userSchema.index({ email: 1 }, { unique: true });
 userSchema.index({ role: 1, status: 1 });
 userSchema.index({ createdAt: -1 });
 

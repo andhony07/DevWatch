@@ -1,36 +1,41 @@
 /**
- * @fileoverview Authentication routes.
+ * @fileoverview Authentication routes — Phase 4 production implementation.
  *
- * Declares all auth endpoints with correct HTTP methods, paths, and middleware.
- * Route handlers are intentionally stubbed for Phase 2 initialization.
- * Full implementations (controllers, services, models) will be wired in Phase 3.
+ * All stub handlers from Phase 2 have been replaced with:
+ *   1. Input validation via the existing `validate` middleware
+ *   2. Async error wrapping via `catchAsync`
+ *   3. Real controller methods from AuthController
+ *
+ * Protected routes require a valid JWT access token via the `authenticate`
+ * middleware. Role-based guarding uses `authorize(...roles)` from the same file.
  *
  * Registered endpoints:
- *   POST   /api/v1/auth/register
- *   POST   /api/v1/auth/login
- *   POST   /api/v1/auth/logout        (protected)
- *   POST   /api/v1/auth/refresh
- *   GET    /api/v1/auth/me            (protected)
- *   POST   /api/v1/auth/forgot-password
- *   PATCH  /api/v1/auth/reset-password
+ *   POST   /api/v1/auth/register          (public)
+ *   POST   /api/v1/auth/login             (public)
+ *   POST   /api/v1/auth/refresh           (public — uses cookie or body token)
+ *   POST   /api/v1/auth/forgot-password   (public)
+ *   PATCH  /api/v1/auth/reset-password    (public)
+ *   POST   /api/v1/auth/logout            (protected)
+ *   GET    /api/v1/auth/me                (protected)
+ *   GET    /api/v1/auth/verify-email      (public — token in query param)
  */
 
 import { Router } from 'express';
+import { AuthController } from '../controllers/auth.controller.js';
 import { authenticate } from '../middleware/auth.middleware.js';
-import { HTTP_STATUS } from '../constants/httpStatus.js';
+import { validate } from '../middleware/validate.middleware.js';
+import { catchAsync } from '../utils/catchAsync.js';
+import {
+  registerSchema,
+  loginSchema,
+  forgotPasswordSchema,
+  resetPasswordSchema,
+} from '../validators/auth.validator.js';
 
 const router = Router();
 
-/** Shared stub response for Phase 2 initialization. */
-const phase3Stub = (endpoint) => (_req, res) => {
-  res.status(HTTP_STATUS.NOT_IMPLEMENTED).json({
-    success: false,
-    statusCode: HTTP_STATUS.NOT_IMPLEMENTED,
-    message: 'Authentication module will be fully implemented in Phase 3.',
-    endpoint,
-    timestamp: new Date().toISOString(),
-  });
-};
+// Singleton controller instance — all methods are bound in the constructor
+const authController = new AuthController();
 
 // ── Public Routes ─────────────────────────────────────────────────────────────
 
@@ -39,50 +44,65 @@ const phase3Stub = (endpoint) => (_req, res) => {
  * @desc    Register a new user account
  * @access  Public
  */
-router.post('/register', phase3Stub('POST /api/v1/auth/register'));
+router.post('/register', validate(registerSchema), catchAsync(authController.register));
 
 /**
  * @route   POST /api/v1/auth/login
- * @desc    Authenticate user and return JWT tokens
+ * @desc    Authenticate user and issue JWT access + refresh tokens
  * @access  Public
  */
-router.post('/login', phase3Stub('POST /api/v1/auth/login'));
+router.post('/login', validate(loginSchema), catchAsync(authController.login));
 
 /**
  * @route   POST /api/v1/auth/refresh
- * @desc    Refresh access token using a valid refresh token
- * @access  Public
+ * @desc    Issue a new access token using a valid refresh token
+ * @access  Public (token from signed cookie or request body)
  */
-router.post('/refresh', phase3Stub('POST /api/v1/auth/refresh'));
+router.post('/refresh', catchAsync(authController.refresh));
 
 /**
  * @route   POST /api/v1/auth/forgot-password
- * @desc    Send password reset email
+ * @desc    Trigger password reset — generates and stores a reset token
  * @access  Public
  */
-router.post('/forgot-password', phase3Stub('POST /api/v1/auth/forgot-password'));
+router.post(
+  '/forgot-password',
+  validate(forgotPasswordSchema),
+  catchAsync(authController.forgotPassword)
+);
 
 /**
  * @route   PATCH /api/v1/auth/reset-password
  * @desc    Reset password using a valid reset token
  * @access  Public
  */
-router.patch('/reset-password', phase3Stub('PATCH /api/v1/auth/reset-password'));
+router.patch(
+  '/reset-password',
+  validate(resetPasswordSchema),
+  catchAsync(authController.resetPassword)
+);
+
+/**
+ * @route   GET /api/v1/auth/verify-email
+ * @desc    Verify email address using a token from the verification link
+ * @access  Public (?token=<rawToken>)
+ */
+router.get('/verify-email', catchAsync(authController.verifyEmail));
 
 // ── Protected Routes ──────────────────────────────────────────────────────────
 
 /**
  * @route   POST /api/v1/auth/logout
- * @desc    Invalidate the current session / token
- * @access  Protected
+ * @desc    Invalidate the current refresh token and clear cookie
+ * @access  Protected (Bearer token required)
  */
-router.post('/logout', authenticate, phase3Stub('POST /api/v1/auth/logout'));
+router.post('/logout', authenticate, catchAsync(authController.logout));
 
 /**
  * @route   GET /api/v1/auth/me
- * @desc    Return the currently authenticated user's profile
- * @access  Protected
+ * @desc    Return the authenticated user's profile (no password)
+ * @access  Protected (Bearer token required)
  */
-router.get('/me', authenticate, phase3Stub('GET /api/v1/auth/me'));
+router.get('/me', authenticate, catchAsync(authController.getMe));
 
 export default router;

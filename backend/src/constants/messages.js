@@ -30,11 +30,18 @@ export const MESSAGES = Object.freeze({
     TOKEN_INVALID: 'Authentication token is invalid or malformed.',
     TOKEN_EXPIRED: 'Authentication token has expired. Please log in again.',
     REFRESH_SUCCESS: 'Access token refreshed successfully.',
+    REFRESH_TOKEN_MISSING: 'Refresh token is missing.',
+    REFRESH_TOKEN_INVALID: 'Refresh token is invalid or has expired.',
     EMAIL_IN_USE: 'An account with this email address already exists.',
     ACCOUNT_INACTIVE: 'This account has been deactivated. Please contact support.',
     PASSWORD_RESET_SENT: 'Password reset instructions have been sent to your email.',
     PASSWORD_RESET_SUCCESS: 'Password has been reset successfully.',
+    PASSWORD_RESET_TOKEN_INVALID: 'Password reset token is invalid or has expired.',
     PROFILE_FETCHED: 'User profile retrieved successfully.',
+    EMAIL_VERIFICATION_SENT: 'A verification email has been dispatched to your inbox.',
+    EMAIL_VERIFIED: 'Email address verified successfully.',
+    EMAIL_ALREADY_VERIFIED: 'This email address is already verified.',
+    EMAIL_VERIFY_TOKEN_INVALID: 'Email verification token is invalid or has expired.',
   }),
 
   // ── Health Check ───────────────────────────────────────────

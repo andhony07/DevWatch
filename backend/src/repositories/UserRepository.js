@@ -102,4 +102,153 @@ export class UserRepository extends BaseRepository {
   findSafeById(id) {
     return this.findById(id, { select: '-password' });
   }
+
+  // ── Refresh Token ─────────────────────────────────────────────────────────────
+
+  /**
+   * Stores a hashed refresh token for the given user.
+   *
+   * @param {string|import('mongoose').Types.ObjectId} userId
+   * @param {string} hashedToken - bcrypt hash of the raw refresh token
+   * @returns {Promise<import('mongoose').Document|null>}
+   */
+  storeRefreshToken(userId, hashedToken) {
+    return this.model.findByIdAndUpdate(
+      userId,
+      { $set: { refreshToken: hashedToken } },
+      { new: true, runValidators: false }
+    );
+  }
+
+  /**
+   * Finds a user that has the given hashed refresh token stored.
+   * Explicitly selects the refreshToken field (excluded by default).
+   *
+   * @param {string|import('mongoose').Types.ObjectId} userId
+   * @returns {Promise<import('mongoose').Document|null>}
+   */
+  findByIdWithRefreshToken(userId) {
+    return this.model.findById(userId).select('+refreshToken');
+  }
+
+  /**
+   * Clears the stored refresh token for a user (logout / invalidation).
+   *
+   * @param {string|import('mongoose').Types.ObjectId} userId
+   * @returns {Promise<import('mongoose').Document|null>}
+   */
+  clearRefreshToken(userId) {
+    return this.model.findByIdAndUpdate(
+      userId,
+      { $set: { refreshToken: null } },
+      { new: true, runValidators: false }
+    );
+  }
+
+  // ── Password Reset ────────────────────────────────────────────────────────────
+
+  /**
+   * Stores a hashed password reset token and its expiry date.
+   *
+   * @param {string|import('mongoose').Types.ObjectId} userId
+   * @param {string} hashedToken
+   * @param {Date} expires
+   * @returns {Promise<import('mongoose').Document|null>}
+   */
+  setPasswordResetToken(userId, hashedToken, expires) {
+    return this.model.findByIdAndUpdate(
+      userId,
+      { $set: { passwordResetToken: hashedToken, passwordResetExpires: expires } },
+      { new: true, runValidators: false }
+    );
+  }
+
+  /**
+   * Finds a user by their hashed password reset token, including token fields.
+   * Also checks that the token has not yet expired.
+   *
+   * @param {string} hashedToken
+   * @returns {Promise<import('mongoose').Document|null>}
+   */
+  findByPasswordResetToken(hashedToken) {
+    return this.model
+      .findOne({
+        passwordResetToken: hashedToken,
+        passwordResetExpires: { $gt: new Date() },
+      })
+      .select('+passwordResetToken +password');
+  }
+
+  /**
+   * Clears the password reset token fields after a successful reset.
+   *
+   * @param {string|import('mongoose').Types.ObjectId} userId
+   * @returns {Promise<import('mongoose').Document|null>}
+   */
+  clearPasswordResetToken(userId) {
+    return this.model.findByIdAndUpdate(
+      userId,
+      { $set: { passwordResetToken: null, passwordResetExpires: null } },
+      { new: true, runValidators: false }
+    );
+  }
+
+  // ── Email Verification ────────────────────────────────────────────────────────
+
+  /**
+   * Stores a hashed email verification token and its expiry.
+   *
+   * @param {string|import('mongoose').Types.ObjectId} userId
+   * @param {string} hashedToken
+   * @param {Date} expires
+   * @returns {Promise<import('mongoose').Document|null>}
+   */
+  setEmailVerificationToken(userId, hashedToken, expires) {
+    return this.model.findByIdAndUpdate(
+      userId,
+      {
+        $set: {
+          emailVerificationToken: hashedToken,
+          emailVerificationExpires: expires,
+        },
+      },
+      { new: true, runValidators: false }
+    );
+  }
+
+  /**
+   * Finds a user by their hashed email verification token.
+   * Only returns users with a non-expired token.
+   *
+   * @param {string} hashedToken
+   * @returns {Promise<import('mongoose').Document|null>}
+   */
+  findByEmailVerificationToken(hashedToken) {
+    return this.model
+      .findOne({
+        emailVerificationToken: hashedToken,
+        emailVerificationExpires: { $gt: new Date() },
+      })
+      .select('+emailVerificationToken');
+  }
+
+  /**
+   * Marks the user's email as verified and clears the verification token.
+   *
+   * @param {string|import('mongoose').Types.ObjectId} userId
+   * @returns {Promise<import('mongoose').Document|null>}
+   */
+  verifyEmail(userId) {
+    return this.model.findByIdAndUpdate(
+      userId,
+      {
+        $set: {
+          emailVerified: true,
+          emailVerificationToken: null,
+          emailVerificationExpires: null,
+        },
+      },
+      { new: true, runValidators: false }
+    );
+  }
 }
