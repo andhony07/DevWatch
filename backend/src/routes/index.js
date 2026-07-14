@@ -5,10 +5,11 @@
  * This is the single file to update when adding new Phase 3+ modules.
  *
  * Current routes:
- *   /api/v1/health  → health.routes.js
- *   /api/v1/auth    → auth.routes.js
+ *   /api/v1/health    → health.routes.js
+ *   /api/v1/auth      → auth.routes.js
+ *   /api/v1/projects  → project.routes.js
  *
- * Future routes (Phase 3+):
+ * Future routes (Phase 6+):
  *   /api/v1/monitoring
  *   /api/v1/alerts
  *   /api/v1/ai
@@ -23,6 +24,7 @@
 import { Router } from 'express';
 import healthRoutes from './health.routes.js';
 import authRoutes from './auth.routes.js';
+import projectRoutes from './project.routes.js';
 import { logger } from '../config/logger.js';
 import { APP_CONSTANTS } from '../constants/appConstants.js';
 
@@ -32,6 +34,7 @@ const router = Router();
 
 router.use('/health', healthRoutes);
 router.use('/auth', authRoutes);
+router.use('/projects', projectRoutes);
 
 // ── Startup Route Logging ─────────────────────────────────────────────────────
 
@@ -47,8 +50,11 @@ export const logRegisteredRoutes = (prefix = `/${APP_CONSTANTS.API_VERSION}`) =>
 
   /** @type {Array<{ method: string; path: string; access: string }>} */
   const routes = [
+    // ── Health ────────────────────────────────────────────────
     { method: 'GET   ', path: `${apiPrefix}/health`, access: 'public' },
     { method: 'GET   ', path: `${apiPrefix}/health/ping`, access: 'public' },
+
+    // ── Auth ──────────────────────────────────────────────────
     { method: 'POST  ', path: `${apiPrefix}/auth/register`, access: 'public' },
     { method: 'POST  ', path: `${apiPrefix}/auth/login`, access: 'public' },
     { method: 'POST  ', path: `${apiPrefix}/auth/refresh`, access: 'public' },
@@ -56,6 +62,20 @@ export const logRegisteredRoutes = (prefix = `/${APP_CONSTANTS.API_VERSION}`) =>
     { method: 'PATCH ', path: `${apiPrefix}/auth/reset-password`, access: 'public' },
     { method: 'POST  ', path: `${apiPrefix}/auth/logout`, access: 'protected' },
     { method: 'GET   ', path: `${apiPrefix}/auth/me`, access: 'protected' },
+
+    // ── Projects ──────────────────────────────────────────────
+    { method: 'POST  ', path: `${apiPrefix}/projects`, access: 'protected' },
+    { method: 'GET   ', path: `${apiPrefix}/projects`, access: 'protected' },
+    { method: 'GET   ', path: `${apiPrefix}/projects/:projectId`, access: 'protected' },
+    { method: 'PATCH ', path: `${apiPrefix}/projects/:projectId`, access: 'protected' },
+    { method: 'DELETE', path: `${apiPrefix}/projects/:projectId`, access: 'protected' },
+    { method: 'PATCH ', path: `${apiPrefix}/projects/:projectId/restore`, access: 'protected' },
+    { method: 'POST  ', path: `${apiPrefix}/projects/:projectId/members`, access: 'protected' },
+    {
+      method: 'DELETE',
+      path: `${apiPrefix}/projects/:projectId/members/:userId`,
+      access: 'protected',
+    },
   ];
 
   logger.info('─────────────────────────────────────────────');

@@ -5,6 +5,10 @@
  *   - Owner and team-member lookups
  *   - Team membership management
  *   - Population helpers for owner and team
+ *   - Full-text search across name / description / repositoryUrl / tags
+ *   - Combined filter + pagination queries for the list endpoint
+ *   - Duplicate name checking per owner
+ *   - Soft-delete-aware restore lookup
  */
 
 import { BaseRepository } from './BaseRepository.js';
@@ -123,5 +127,129 @@ export class ProjectRepository extends BaseRepository {
       query.environment = environment;
     }
     return this.paginate(query, { sort: '-createdAt', ...options });
+  }
+
+  // ── Search ────────────────────────────────────────────────────────────────────
+
+  /**
+   * Full-text search across name, description, repositoryUrl, and tags.
+   * Uses case-insensitive regex queries.
+   *
+   * @param {string} searchTerm - Raw search string from the user
+   * @param {object} [additionalFilter={}] - Merged with the search filter
+   * @param {object} [options={}] - Pagination / sort options
+   * @returns {Promise<object>} Paginated result
+   */
+  search(searchTerm, additionalFilter = {}, options = {}) {
+    const regex = new RegExp(searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
+
+    const searchFilter = {
+      $or: [{ name: regex }, { description: regex }, { repositoryUrl: regex }, { tags: regex }],
+      ...additionalFilter,
+    };
+
+    return this.paginate(searchFilter, { sort: '-createdAt', ...options });
+  }
+
+  // ── Combined Filter + Pagination ──────────────────────────────────────────────
+
+  /**
+   * Resolves a set of filter parameters into a MongoDB filter object and paginates.
+   *
+   * Supported filters: status, cloudProvider, environment, owner,
+   *                    createdAfter, createdBefore
+   *
+   * @param {object} filters
+   * @param {string|null} [filters.status]
+   * @param {string|null} [filters.cloudProvider]
+   * @param {string|null} [filters.environment]
+   * @param {string|null} [filters.owner]
+   * @param {Date|null}   [filters.createdAfter]
+   * @param {Date|null}   [filters.createdBefore]
+   * @param {object} [options={}] - Pagination / sort options
+   * @returns {Promise<object>} Paginated result
+   */
+  findAllWithFilters(
+    { status, cloudProvider, environment, owner, createdAfter, createdBefore } = {},
+    options = {}
+  ) {
+    const filter = {};
+
+    if (status) {
+      filter.status = status;
+    }
+    if (cloudProvider) {
+      filter.cloudProvider = cloudProvider;
+    }
+    if (environment) {
+      filter.environment = environment;
+    }
+    if (owner) {
+      filter.owner = owner;
+    }
+
+    if (createdAfter || createdBefore) {
+      filter.createdAt = {};
+      if (createdAfter) {
+        filter.createdAt.$gte = createdAfter;
+      }
+      if (createdBefore) {
+        filter.createdAt.$lte = createdBefore;
+      }
+    }
+
+    return this.paginate(filter, options);
+  }
+
+  // ── Duplicate Check ───────────────────────────────────────────────────────────
+
+  /**
+   * Returns true if a project with the given name already exists for the same owner.
+   * Optionally excludes a specific project ID (useful for update operations).
+   *
+   * @param {string} name - Project name (case-insensitive comparison)
+   * @param {string|import('mongoose').Types.ObjectId} ownerId
+   * @param {string|import('mongoose').Types.ObjectId|null} [excludeId=null]
+   * @returns {Promise<boolean>}
+   */
+  existsByNameAndOwner(name, ownerId, excludeId = null) {
+    const filter = {
+      name: new RegExp(`^${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i'),
+      owner: ownerId,
+    };
+    if (excludeId) {
+      filter._id = { $ne: excludeId };
+    }
+    return this.exists(filter);
+  }
+
+  // ── Soft-Delete Aware Lookup ──────────────────────────────────────────────────
+
+  /**
+   * Finds a project by ID including soft-deleted documents.
+   * Required by the restore flow (the project won't appear in normal queries).
+   *
+   * @param {string|import('mongoose').Types.ObjectId} id
+   * @returns {Promise<import('mongoose').Document|null>}
+   */
+  findByIdIncludeDeleted(id) {
+    return this.model.findById(id).setOptions({ includeDeleted: true }).exec();
+  }
+
+  /**
+   * Finds a project by ID with team populated, including soft-deleted documents.
+   *
+   * @param {string|import('mongoose').Types.ObjectId} id
+   * @returns {Promise<import('mongoose').Document|null>}
+   */
+  findByIdWithTeamIncludeDeleted(id) {
+    return this.model
+      .findById(id)
+      .setOptions({ includeDeleted: true })
+      .populate([
+        { path: 'owner', select: 'fullName email avatar role' },
+        { path: 'teamMembers', select: 'fullName email avatar role' },
+      ])
+      .exec();
   }
 }

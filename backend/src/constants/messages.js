@@ -95,4 +95,26 @@ export const MESSAGES = Object.freeze({
     LOG_CREATED: 'Audit event logged.',
     LOGS_FETCHED: 'Audit logs retrieved successfully.',
   }),
+
+  // ── Project ───────────────────────────────────────────────────────────────────
+  PROJECT: Object.freeze({
+    CREATED: 'Project created successfully.',
+    FETCHED: 'Project retrieved successfully.',
+    LIST_FETCHED: 'Projects retrieved successfully.',
+    UPDATED: 'Project updated successfully.',
+    DELETED: 'Project deleted successfully.',
+    RESTORED: 'Project restored successfully.',
+    NOT_FOUND: 'Project not found.',
+    DUPLICATE_NAME: 'A project with this name already exists for this owner.',
+    FORBIDDEN_READ: 'You do not have access to this project.',
+    FORBIDDEN_WRITE: 'Only the project owner or an admin can perform this action.',
+    MEMBER_ADDED: 'Team member added successfully.',
+    MEMBER_REMOVED: 'Team member removed successfully.',
+    MEMBER_NOT_FOUND: 'The specified user does not exist.',
+    MEMBER_ALREADY_EXISTS: 'This user is already a team member of the project.',
+    MEMBER_NOT_IN_PROJECT: 'This user is not a member of the project.',
+    CANNOT_REMOVE_OWNER: 'The project owner cannot be removed from team members.',
+    RESTORE_NOT_DELETED: 'This project is not soft-deleted and cannot be restored.',
+    ALREADY_DELETED: 'This project has already been deleted.',
+  }),
 });

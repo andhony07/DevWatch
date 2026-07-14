@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /**
  * @fileoverview Unit tests for jwt.util.js
  *
