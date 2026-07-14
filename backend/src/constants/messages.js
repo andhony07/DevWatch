@@ -67,8 +67,9 @@ export const MESSAGES = Object.freeze({
     GRACEFUL_SHUTDOWN: 'Server shut down gracefully. Goodbye.',
   }),
 
-  // ── Monitoring ────────────────────────────────────────────
+  // ── Monitoring ────────────────────────────────────────────────
   MONITORING: Object.freeze({
+    // Existing messages (unchanged)
     METRIC_RECORDED: 'Metric recorded successfully.',
     ALERT_TRIGGERED: 'Alert condition has been triggered.',
     ALERT_RESOLVED: 'Alert has been resolved.',
@@ -76,6 +77,28 @@ export const MESSAGES = Object.freeze({
     SERVICE_HEALTHY: 'Service is responding normally.',
     SERVICE_DEGRADED: 'Service is experiencing elevated response times.',
     SERVICE_DOWN: 'Service is not responding.',
+
+    // Phase 6 — Snapshot
+    SNAPSHOT_CREATED: 'Monitoring snapshot recorded successfully.',
+    SNAPSHOT_NOT_FOUND: 'Monitoring snapshot not found.',
+    LATEST_FETCHED: 'Latest metrics retrieved successfully.',
+    HISTORY_FETCHED: 'Monitoring history retrieved successfully.',
+    PROJECT_METRICS_FETCHED: 'Project metrics retrieved successfully.',
+
+    // Phase 6 — Analytics
+    ANALYTICS_FETCHED: 'Analytics data retrieved successfully.',
+    ANALYTICS_NO_DATA: 'Insufficient data to compute analytics for the specified range.',
+
+    // Phase 6 — Access control
+    FORBIDDEN_READ: 'You do not have access to monitoring data for this project.',
+    FORBIDDEN_WRITE: 'Only the project owner or an admin can record monitoring snapshots.',
+    PROJECT_NOT_FOUND: 'The referenced project does not exist.',
+
+    // Phase 6 — Scheduler / jobs
+    SCHEDULER_STARTED: 'Monitoring scheduler started.',
+    SCHEDULER_STOPPED: 'Monitoring scheduler stopped.',
+    CLEANUP_COMPLETED: 'Data retention cleanup completed.',
+    AGGREGATION_COMPLETED: 'Metric aggregation job completed.',
   }),
 
   // ── Analytics ────────────────────────────────────────────

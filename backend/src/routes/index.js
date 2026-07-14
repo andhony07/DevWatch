@@ -2,15 +2,15 @@
  * @fileoverview Master API router for version 1.
  *
  * Aggregates all feature route modules under the /api/v1 prefix.
- * This is the single file to update when adding new Phase 3+ modules.
+ * This is the single file to update when adding new Phase modules.
  *
  * Current routes:
- *   /api/v1/health    → health.routes.js
- *   /api/v1/auth      → auth.routes.js
- *   /api/v1/projects  → project.routes.js
+ *   /api/v1/health       → health.routes.js
+ *   /api/v1/auth         → auth.routes.js
+ *   /api/v1/projects     → project.routes.js
+ *   /api/v1/monitoring   → monitoring.routes.js  ← Phase 6
  *
- * Future routes (Phase 6+):
- *   /api/v1/monitoring
+ * Future routes (Phase 7+):
  *   /api/v1/alerts
  *   /api/v1/ai
  *   /api/v1/analytics
@@ -25,8 +25,11 @@ import { Router } from 'express';
 import healthRoutes from './health.routes.js';
 import authRoutes from './auth.routes.js';
 import projectRoutes from './project.routes.js';
+import monitoringRoutes from './monitoring.routes.js';
 import { logger } from '../config/logger.js';
 import { APP_CONSTANTS } from '../constants/appConstants.js';
+
+const { API_VERSION } = APP_CONSTANTS;
 
 const router = Router();
 
@@ -35,17 +38,17 @@ const router = Router();
 router.use('/health', healthRoutes);
 router.use('/auth', authRoutes);
 router.use('/projects', projectRoutes);
+router.use('/monitoring', monitoringRoutes);
 
 // ── Startup Route Logging ─────────────────────────────────────────────────────
 
 /**
  * Logs every registered API route to the console at server startup.
- * Call once from server.js after the HTTP server begins listening.
  *
- * @param {string} [prefix='/api/v1'] - The versioned API prefix
+ * @param {string} [prefix='/v1']
  * @returns {void}
  */
-export const logRegisteredRoutes = (prefix = `/${APP_CONSTANTS.API_VERSION}`) => {
+export const logRegisteredRoutes = (prefix = `/${API_VERSION}`) => {
   const apiPrefix = `/api${prefix}`;
 
   /** @type {Array<{ method: string; path: string; access: string }>} */
@@ -74,6 +77,17 @@ export const logRegisteredRoutes = (prefix = `/${APP_CONSTANTS.API_VERSION}`) =>
     {
       method: 'DELETE',
       path: `${apiPrefix}/projects/:projectId/members/:userId`,
+      access: 'protected',
+    },
+
+    // ── Monitoring (Phase 6) ──────────────────────────────────
+    { method: 'POST  ', path: `${apiPrefix}/monitoring`, access: 'protected' },
+    { method: 'GET   ', path: `${apiPrefix}/monitoring/latest`, access: 'protected' },
+    { method: 'GET   ', path: `${apiPrefix}/monitoring/history`, access: 'protected' },
+    { method: 'GET   ', path: `${apiPrefix}/monitoring/analytics`, access: 'protected' },
+    {
+      method: 'GET   ',
+      path: `${apiPrefix}/monitoring/projects/:projectId`,
       access: 'protected',
     },
   ];
