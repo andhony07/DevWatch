@@ -28,6 +28,14 @@ dist/
 build/
 
 # ==========================
+# Flutter
+# ==========================
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+
+# ==========================
 # Operating System Files
 # ==========================
 .DS_Store
@@ -37,4 +45,13 @@ Thumbs.db
 # IDE
 # ==========================
 .vscode/
+!.vscode/extensions.json
 .idea/
+
+# ==========================
+# Flutter
+# ==========================
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
