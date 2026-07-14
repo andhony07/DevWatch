@@ -113,10 +113,8 @@ export const displayBanner = ({ port, environment, mongoUri }) => {
       ` ${C.bold}${C.green}|____/|_____| |____/|______/ \\_\\ |_| \\_\\\\____|_____|_||_|${C.reset}`
     ),
     row('', ''),
-    row(
-      'AI Cloud-Based DevOps Monitoring Dashboard',
-      `${C.yellow}AI Cloud-Based DevOps Monitoring Dashboard${C.reset}`
-    ),
+    row(APP_CONSTANTS.APP_NAME, `${C.bold}${C.yellow}${APP_CONSTANTS.APP_NAME}${C.reset}`),
+    row(APP_CONSTANTS.APP_TAGLINE, `${C.white}${APP_CONSTANTS.APP_TAGLINE}${C.reset}`),
     row('', ''),
     border('mid'),
     infoRow('Version', APP_CONSTANTS.APP_VERSION),

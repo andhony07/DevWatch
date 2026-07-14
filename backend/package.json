@@ -19,6 +19,7 @@
     "test": "node --experimental-vm-modules node_modules/jest-cli/bin/jest.js --passWithNoTests --forceExit"
   },
   "dependencies": {
+    "bcryptjs": "^3.0.3",
     "compression": "^1.7.4",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",

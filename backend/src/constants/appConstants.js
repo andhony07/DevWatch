@@ -5,6 +5,7 @@
 
 export const APP_CONSTANTS = Object.freeze({
   APP_NAME: 'DevWatch',
+  APP_TAGLINE: 'AI Cloud-Based DevOps Monitoring Dashboard',
   APP_VERSION: '1.0.0',
   API_VERSION: 'v1',
   COMPANY: 'DevWatch Team',
