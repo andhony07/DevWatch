@@ -39,6 +39,15 @@ validateEnv();
  */
 
 /**
+ * @typedef {Object} SocketConfig
+ * @property {number} port
+ * @property {number} heartbeatInterval
+ * @property {number} timeout
+ * @property {number} reconnectLimit
+ * @property {string} logLevel
+ */
+
+/**
  * @typedef {Object} AppConfig
  * @property {string}    nodeEnv       - NODE_ENV value
  * @property {number}    port          - HTTP server port
@@ -47,7 +56,7 @@ validateEnv();
  * @property {string|undefined} openAiApiKey - OpenAI API key (optional)
  * @property {string}    clientUrl     - Allowed CORS origin
  * @property {string}    logLevel      - Winston log level
- * @property {number}    socketPort    - Socket.IO port (typically same as HTTP)
+ * @property {SocketConfig} socket     - Socket configuration
  * @property {boolean}   isProduction  - Shorthand for NODE_ENV === 'production'
  * @property {boolean}   isDevelopment - Shorthand for NODE_ENV === 'development'
  * @property {boolean}   isTest        - Shorthand for NODE_ENV === 'test'
@@ -69,7 +78,14 @@ export const config = Object.freeze({
   openAiApiKey: process.env.OPENAI_API_KEY || undefined,
   clientUrl: process.env.CLIENT_URL,
   logLevel: process.env.LOG_LEVEL,
-  socketPort: parseInt(process.env.SOCKET_PORT, 10),
+
+  socket: Object.freeze({
+    port: parseInt(process.env.SOCKET_PORT, 10),
+    heartbeatInterval: parseInt(process.env.SOCKET_HEARTBEAT_INTERVAL, 10),
+    timeout: parseInt(process.env.SOCKET_TIMEOUT, 10),
+    reconnectLimit: parseInt(process.env.SOCKET_RECONNECT_LIMIT, 10),
+    logLevel: process.env.SOCKET_LOG_LEVEL,
+  }),
 
   isProduction: process.env.NODE_ENV === 'production',
   isDevelopment: process.env.NODE_ENV === 'development',

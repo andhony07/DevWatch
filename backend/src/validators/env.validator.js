@@ -77,6 +77,30 @@ const ENV_SCHEMA = [
     type: 'number',
     default: '5000',
   },
+  {
+    name: 'SOCKET_HEARTBEAT_INTERVAL',
+    required: false,
+    type: 'number',
+    default: '25000',
+  },
+  {
+    name: 'SOCKET_TIMEOUT',
+    required: false,
+    type: 'number',
+    default: '60000',
+  },
+  {
+    name: 'SOCKET_RECONNECT_LIMIT',
+    required: false,
+    type: 'number',
+    default: '5',
+  },
+  {
+    name: 'SOCKET_LOG_LEVEL',
+    required: false,
+    type: 'string',
+    default: 'info',
+  },
 ];
 
 /**

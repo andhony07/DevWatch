@@ -1,5 +1,5 @@
 /* eslint-disable no-undef */
-/* eslint-disable no-unused-vars */
+ 
 /**
  * @fileoverview Unit tests for MonitoringService.
  *
@@ -36,6 +36,13 @@ jest.unstable_mockModule('../../src/config/logger.js', () => ({
     warn: jest.fn(),
     error: jest.fn(),
     debug: jest.fn(),
+  },
+}));
+
+jest.unstable_mockModule('../../src/sockets/services/RealtimeMonitoringService.js', () => ({
+  realtimeMonitoringService: {
+    broadcastMetricUpdate: jest.fn(),
+    broadcastAnalytics: jest.fn(),
   },
 }));
 

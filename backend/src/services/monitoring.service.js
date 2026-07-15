@@ -26,6 +26,7 @@
 import { MonitoringRepository } from '../repositories/MonitoringRepository.js';
 import { ProjectRepository } from '../repositories/ProjectRepository.js';
 import { MonitoringResponseDTO, AnalyticsResponseDTO } from '../dto/monitoring/monitoring.dto.js';
+import { realtimeMonitoringService } from '../sockets/services/RealtimeMonitoringService.js';
 import { enrichKPIs } from '../utils/monitoring.analytics.js';
 import { ApiError } from '../utils/ApiError.js';
 import { MESSAGES } from '../constants/messages.js';
@@ -139,7 +140,12 @@ export class MonitoringService {
       `[MonitoringService] Snapshot recorded for project ${dto.projectId} by user ${userId}`
     );
 
-    return { snapshot: MonitoringResponseDTO.fromDocument(snapshot) };
+    const snapshotDto = MonitoringResponseDTO.fromDocument(snapshot);
+
+    // Broadcast the update via sockets (Phase 7)
+    realtimeMonitoringService.broadcastMetricUpdate(dto.projectId, snapshotDto);
+
+    return { snapshot: snapshotDto };
   }
 
   // ── Get Latest Metrics ────────────────────────────────────────────────────────

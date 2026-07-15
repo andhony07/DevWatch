@@ -50,22 +50,47 @@ export const APP_CONSTANTS = Object.freeze({
       NOTIFICATIONS: '/notifications',
     }),
     EVENTS: Object.freeze({
+      // Connection
       CONNECT: 'connection',
       DISCONNECT: 'disconnect',
       ERROR: 'error',
+      SOCKET_CONNECTED: 'socket:connected',
+      SOCKET_AUTHENTICATED: 'socket:authenticated',
+      SOCKET_DISCONNECTED: 'socket:disconnected',
+
+      // Rooms
       JOIN_ROOM: 'room:join',
       LEAVE_ROOM: 'room:leave',
-      METRIC_UPDATE: 'metric:update',
-      ALERT_TRIGGERED: 'alert:triggered',
+
+      // Monitoring
+      METRICS_UPDATE: 'metrics:update',
+      METRICS_LATEST: 'metrics:latest',
+      METRICS_HISTORY: 'metrics:history',
+      METRICS_ANALYTICS: 'metrics:analytics',
+
+      // Alerts
+      ALERT_CREATED: 'alert:created',
+      ALERT_UPDATED: 'alert:updated',
       ALERT_RESOLVED: 'alert:resolved',
-      SERVICE_STATUS: 'service:status',
-      PIPELINE_UPDATE: 'pipeline:update',
+
+      // Projects
+      PROJECT_UPDATED: 'project:updated',
+      PROJECT_MEMBER_ADDED: 'project:memberAdded',
+      PROJECT_MEMBER_REMOVED: 'project:memberRemoved',
+
+      // System
+      HEARTBEAT: 'heartbeat',
+      PONG: 'pong',
+      SERVER_SHUTDOWN: 'server:shutdown',
     }),
     ROOMS: Object.freeze({
       GLOBAL: 'global',
       MONITORING: 'monitoring',
       ALERTS: 'alerts',
       NOTIFICATIONS: 'notifications',
+    }),
+    ROOM_PREFIXES: Object.freeze({
+      PROJECT: 'project:',
     }),
     PING_TIMEOUT_MS: 60000,
     PING_INTERVAL_MS: 25000,
