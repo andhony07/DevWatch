@@ -1,0 +1,11 @@
+name: DevWatch Local
+values:
+  - key: baseUrl
+    value: ''
+  - key: token
+    value: ''
+  - key: projectId
+    value: ''
+  - key: monitoringId
+    value: ''
+color: 240

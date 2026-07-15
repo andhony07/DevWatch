@@ -1,0 +1,6 @@
+name: DevWatch Local
+values:
+  - key: baseUrl
+    value: ''
+  - key: token
+    value: ''
